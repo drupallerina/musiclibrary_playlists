@@ -1,0 +1,24 @@
+body div.selector, 
+body div.selector span, 
+body div.checker span,
+body div.radio span, 
+body div.uploader, 
+body div.uploader span.action,
+body div.button,
+body div.button span {
+  background-image: url(../images/mp_custom.uniform_sprite.png);
+  background-repeat: no-repeat;
+  -webkit-font-smoothing: antialiased;
+}
+
+div.mp-filter-cb-disable div.checker span {
+  background-position: -189px -260px;
+}
+
+div.mp-filter-cb-disable div.checker.hover span {
+  background-position: -227px -260px;
+}
+
+li.mp-filter-parent {
+  list-style-type: circle;
+}

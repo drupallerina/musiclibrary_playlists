@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the musiclibrary_playlist feature.
+ */
+
+include_once('musiclibrary_playlist.features.inc');

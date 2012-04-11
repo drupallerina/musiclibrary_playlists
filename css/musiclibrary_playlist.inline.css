@@ -1,0 +1,86 @@
+div.ajax-progress-throbber {
+  float:right;
+}
+
+a.musiclibrary-playlist-inline {
+  white-space: nowrap;
+}
+/* Custom CSS for Playlists. */
+
+div.view-Playlists table {
+  margin-top: 0px;
+}
+
+div.view-Playlists div.playlist-table-wrap {
+  /* display: none; */
+}
+
+div.playlist-header {
+  display: block;
+  width: 100%;
+  clear: both;
+  background-color: #F6F6E1;
+  overflow: auto;
+  padding: 5px 5px 2px 5px;
+  margin-right: 10px;
+}
+
+div.playlist-header h2.playlist-title {
+  float:left;
+  display: block;
+  color: #F98800;
+  font-weight: bold;
+  padding-left: 20px;
+}
+
+#main div.playlist-header h2.playlist-title a {
+  color: #B6BC07;
+}
+
+#main div.playlist-header h2.playlist-title a.collapsed {
+  color: #F98800;
+}
+
+ul.playlist-links {
+  list-style-type: none;
+  float: right;
+  display: block;
+  margin: 0px 10px 0px 0px;
+  width: 400px;
+}
+
+ul.playlist-links li {
+  display: inline;
+}
+
+div.playlist-table-wrap {
+  display: none;
+}
+
+div.jp-audio {
+  width: auto;
+  background-color: transparent;
+  border: 0px;
+}
+
+div.jp-audio div.jp-playlist {
+  display: none;
+}
+
+div.jp-audio div.jp-type-playlist div.jp-interface {
+  border: 0px;
+  background-color: transparent;
+  height: 40px;
+}
+
+div.jp-audio div.jp-type-playlist div.jp-progress {
+  left: 0px;
+  height: 3px;
+  top: 42px;
+  width: 40px;
+}
+
+div.jp-audio div.jp-type-playlist a.jp-play, div.jp-audio div.jp-type-playlist a.jp-pause {
+  left: 0px;
+  top: 0px;
+}
