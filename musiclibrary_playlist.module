@@ -5,3 +5,214 @@
  */
 
 include_once('musiclibrary_playlist.features.inc');
+/**
+ * Implementation of hook_menu().
+ *
+ * @return An array of menu items.
+ */
+function musiclibrary_playlist_menu() {
+  $items = array();
+  
+  $items['mp/%ctools_js/%node/playlists'] = array(
+    'title' => 'Add/Remove From Playlists',
+    'description' => 'Form to add or remove a specific track from one or more playlists.',
+    'page callback' => 'musiclibrary_playlist_menu_track_edit_playlists',
+    'page arguments' => array(2, 4, 1),
+    'access arguments' => array('edit own playlist content'),
+    'file' => 'includes/menu.inc',
+  );
+  
+  $items['mp/%ctools_js/%node/playlists/%node'] = array(
+    'title' => 'Add/Remove From Playlists',
+    'description' => 'Form to add or remove a specific track from one or more playlists.',
+    'page callback' => 'musiclibrary_playlist_menu_track_edit_playlists',
+    'page arguments' => array(2, 4, 1),
+    'access arguments' => array('edit own playlist content'),
+    'file' => 'includes/menu.inc',
+  );
+  
+  $items['mp/%ctools_js/%node/playlists/%node/remove/%'] = array(
+    'title' => 'Remove',
+    'description' => 'Form to add or remove a specific track from one or more playlists.',
+    'page callback' => 'musiclibrary_playlist_menu_track_remove_playlists',
+    'page arguments' => array(2, 4, 6, 1),
+    'access arguments' => array('edit own playlist content'),
+    'file' => 'includes/menu.inc',
+  );
+  
+  $items['mp/%ctools_js/add/playlists'] = array(
+    'title' => 'Create playlist',
+    'description' => 'Form to create a new playlist',
+    'page callback' => 'musiclibrary_playlist_menu_playlists_add',
+    'page arguments' => array(1),
+    'access arguments' => array('edit own playlist content'),
+    'file' => 'includes/menu.inc',
+  );
+  
+  $items['mp/%ctools_js/%node/edit'] = array(
+    'title' => 'Rename Playlist',
+    'description' => 'Form to edit a playlist.',
+    'page callback' => 'musiclibrary_playlist_menu_playlists_edit',
+    'page arguments' => array(2, 1),
+    'access arguments' => array('edit own playlist content'),
+    'file' => 'includes/menu.inc',
+  );
+
+  $items['mp/%ctools_js/%node/delete'] = array(
+    'title' => 'Delete Playlist',
+    'description' => 'Form to delete a playlist.',
+    'page callback' => 'musiclibrary_playlist_menu_playlists_delete',
+    'page arguments' => array(2, 1),
+    'access arguments' => array('delete own playlist content'),
+    'file' => 'includes/menu.inc',
+  );
+
+  $items['mp/test'] = array(
+    'title' => 'test',
+    'description' => 'test',
+    'page callback' => 'musiclibrary_playlist_menu_test',
+    'access arguments' => array('access content'),
+    'file' => 'includes/menu.inc',
+  );
+
+  return $items;
+}
+
+
+
+/**
+ * Implementation of hook_form_alter().
+ */
+function musiclibrary_playlist_form_views_exposed_form_form_alter(&$form, &$form_state, $form_id) {
+  switch($form['#id']) {
+    case 'views-exposed-form-playlists-playlists':
+    case 'views-exposed-form-library-library':
+   
+      // This is a hack to prevent Views from adding the auto submit behavior
+      // to this input.  We're tricking it into thinking it's already been
+      // processed.
+      $form['keys']['#attributes']['class'][] = 'ctools-auto-submit-processed';
+      break;
+  } 
+}
+
+/*
+function musiclibrary_playlist_preprocess_jplayer(&$vars) {
+  // Determine a unique player ID.
+  $ids = entity_extract_ids($vars['entity_type'], $vars['entity']);
+  $vars['player_id'] = _jplayer_check_id('jplayer-' . $vars['entity_type'] . '-' . $ids[0] . '-' . str_replace('_', '-', $vars['field_name']));
+
+  $vars['mode'] = $vars['settings']['mode'];
+
+  $player = jplayer_sort_files($vars['items'], $vars['player_id'], $vars['mode']);
+
+  $vars['playlist'] = theme('jplayer_item_list', array('items' => $player['playlist']));
+  $vars['type'] = $player['type'];
+
+  // Add player settings
+  $player = array(
+    'jplayerInstances' => array(
+      $vars['player_id'] => array(
+        'files' => $player['files'],
+        'solution' => $vars['settings']['solution'],
+        'supplied' => $player['extensions'],
+        'preload' => $vars['settings']['preload'],
+        'volume' => $vars['settings']['volume'] / 100,
+        'muted' => (boolean)$vars['settings']['muted'],
+        'autoplay' => (boolean)$vars['settings']['autoplay'],
+        'repeat' => $vars['settings']['repeat'],
+        'backgroundColor' => $vars['settings']['backgroundColor'],
+      ),
+    ),
+  );
+  drupal_add_js($player, 'setting');
+
+  $vars['dynamic'] = jplayer_add_core_js();
+  for($i = 0; $i < sizeof($vars['items']);  $i++) {
+    $rand = rand(100000, 1000000);
+    $vars['items'][0]['filename'] .= '?' . $rand;
+    $vars['items'][0]['uri'] .= '?' . $rand;
+  }
+
+}
+*/
+
+/**
+ * Implements hook_views_pre_render(). 
+ * 
+ * @param views_view $view 
+ */
+function musiclibrary_playlist_views_pre_render($view) {
+    switch(strtolower($view->name)) {
+   case 'playlists':
+   case 'library':
+   
+     // Modal-ify our links.
+      ctools_include('inline', 'musiclibrary_playlist');
+      musiclibrary_playlist_inline_add_js();
+     
+     // Customizations to the exposed filters.
+      $path = libraries_get_path('uniform');
+      $modpath = drupal_get_path('module', 'uniform');
+      // load theme css
+      drupal_add_css($path . '/css/uniform.default.css');
+      drupal_add_css($modpath . '/uniform.css');
+      // load uniform js file, chosing minified version if present.
+      if (file_exists($path . '/jquery.uniform.min.js')) {
+        drupal_add_js($path . '/jquery.uniform.min.js');
+      }
+      else {
+        drupal_add_js($path . '/jquery.uniform.js');
+      }
+      
+      drupal_add_css(drupal_get_path('module', 'musiclibrary_playlist') . '/css/musiclibrary_playlist.filters.css', array('weight' => 100));
+      drupal_add_js(drupal_get_path('module', 'musiclibrary_playlist') . '/js/filters.js');
+      break;
+  }
+}
+
+function musiclibrary_playlist_views_data_alter(&$data) {
+  $data['node']['term_node_tid']['field']['path'] = drupal_get_path('module', 'musiclibrary_playlist') . '/views/handlers';
+  $data['node']['term_node_tid']['field']['handler'] = 'musiclibrary_playlist_views_handler_field_term_node_tid';
+}
+
+function musiclibrary_playlist_views_post_execute($view) {
+  //global $queries;
+  //dpm($queries);
+}
+
+/**
+ * Implementation of hook_views_query_alter().
+  */
+function musiclibrary_playlist_views_query_alter(&$view, &$query) {
+  global $user;
+  if ($view->name == 'playlists') {
+    $view->query->add_where(1,'node.type','playlist','=');
+    $view->query->add_where(1,'node.status',1,'=');
+    $view->query->add_where(1, 'node.uid',$user->uid,'=');
+    $view->query->set_group_operator('OR');
+  }
+}
+
+function musiclibrary_playlist_preprocess_views_view(&$vars) {
+  $variables['theme_hook_suggestions'][] = 'views_view_table';
+}
+
+/**
+* Implementation of hook_theme().
+*/
+function musiclibrary_playlist_theme() {
+  return array(
+    'views_view_table__playlists' => array (
+      'arguments' => array(),
+      'template' => 'views-view-table',
+      'path' => drupal_get_path('module', 'musiclibrary_playlist'),
+      'preprocess functions' => array(
+        'template_preprocess',
+        'template_preprocess_views_view_table',
+        'musiclibrary_playlist_preprocess_views_view_table',
+      ),
+    ),
+  );
+}
+
