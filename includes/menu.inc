@@ -124,8 +124,8 @@ function musiclibrary_playlist_menu_playlists_add($method = 'ajax') {
     }
      * 
      */
-  //  drupal_set_message('Your playlist has been created.');
-    //$output[] = ctools_ajax_command_reload();
+    drupal_set_message('Your playlist has been created.');
+    $output[] = ctools_ajax_command_reload();
     $output[] = musiclibrary_playlist_inline_command_dismiss();
   }
 
@@ -175,6 +175,8 @@ function musiclibrary_playlist_menu_playlists_delete($node, $method) {
     
     $output = musiclibrary_playlist_inline_form_wrapper('musiclibrary_playlist_playlists_delete_form', $form_state);
     if (!empty($form_state['executed']) && is_array($form_state['changes'])) {
+      $output[] = ctools_ajax_command_reload();  
+      drupal_set_message('Your playlist has been deleted.');
       $output[] = musiclibrary_playlist_inline_command_dismiss();
       $output[] = ajax_command_remove('.musiclibrary-playlist-playlist-' . $node->nid);
     }
