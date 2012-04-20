@@ -49,7 +49,7 @@ function musiclibrary_playlist_menu_track_edit_playlists($track, $playlist = NUL
             case 'remove':
               // Remove any removed tracks.
               $remove_commands[] = ajax_command_invoke('tr.musiclibrary-playlist-row-playlist-' . $nid . '.musiclibrary-playlist-row-track-' . $track->nid, 'fadeOut');
-              $remove_commands[] = ajax_command_remove('tr.musiclibrary-playlist-row-playlist-' . $nid . '.musiclibrary-playlist-row-track-' . $track->nid);
+              $remove_commands[] = ajax_command_replace('tr.musiclibrary-playlist-row-playlist-' . $nid . '.musiclibrary-playlist-row-track-' . $track->nid, 'removed track from playlis <a href="library">Browse tracks from the library</a>t');
               $remove_commands[] = ajax_command_restripe('table:has(.musiclibrary-playlist-row-playlist-' . $nid . ')');
               break;
             case 'new':
